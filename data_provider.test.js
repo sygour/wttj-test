@@ -1,7 +1,7 @@
 const data_provider = require('./data_provider');
 
-test('Should retrieve at least professions', () => {
-  const result = data_provider.read_professions();
+test('Should retrieve at least professions', async () => {
+  const result = await data_provider.read_professions();
 
   expect(result).toBeDefined();
   expect(result.length).toBeGreaterThan(0);
