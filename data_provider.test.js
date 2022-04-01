@@ -1,4 +1,4 @@
-const data_provider = require('./data_provider');
+const data_provider = jest.requireActual('./data_provider');
 
 test('Should retrieve at least one profession', async () => {
   const result = await data_provider.read_professions();

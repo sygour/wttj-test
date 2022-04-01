@@ -8,6 +8,9 @@
   },
   "author": "sygour",
   "license": "ISC",
+  "jest": {
+    "automock": true
+  },
   "devDependencies": {
     "jest": "^27.5.1"
   }

@@ -1,4 +1,4 @@
-const locator = require('./locator');
+const locator = jest.requireActual('./locator');
 
 test('Should get a continent for any location', async() => {
   for (let i = 0; i < 100; i++) {

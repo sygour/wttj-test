@@ -1,4 +1,4 @@
-const aggregator = require('./aggregator');
+const aggregator = jest.requireActual('./aggregator');
 
 describe('Features', () => {
   it('Test should pass', () => {
