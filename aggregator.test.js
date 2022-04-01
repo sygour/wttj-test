@@ -24,40 +24,20 @@ beforeEach(() => {
   locator.get_continent = async () => ("europe");
 })
 
-test('Should count jobs per category total', async () => {
-  const result = await aggregator.jobs_per_category_and_continent();
-
-  expect(result).toBeDefined();
-  expect(result.categories).toBeDefined()
-  expect(result.categories.total).toBeDefined()
-  expect(result.categories.total).toBe(1);
-});
-
 test('Should count jobs per category', async () => {
   const result = await aggregator.jobs_per_category_and_continent();
 
   expect(result).toBeDefined();
-  expect(result.categories).toBeDefined()
-  expect(result.categories['Tech']).toBeDefined()
-  expect(result.categories['Tech']).toBe(1);
-});
-
-test('Should count jobs per continent total', async () => {
-  const result = await aggregator.jobs_per_category_and_continent();
-
-  expect(result).toBeDefined();
-  expect(result.continents).toBeDefined()
-  expect(result.continents.total).toBeDefined()
-  expect(result.continents.total).toBe(1);
+  expect(result['Tech']).toBeDefined()
+  expect(result['Tech'].total).toBe(1);
 });
 
 test('Should count jobs per continent', async () => {
   const result = await aggregator.jobs_per_category_and_continent();
 
   expect(result).toBeDefined();
-  expect(result.continents).toBeDefined()
-  expect(result.continents['europe']).toBeDefined()
-  expect(result.continents['europe']).toBe(1);
+  expect(result['Tech']).toBeDefined()
+  expect(result['Tech']['europe']).toBe(1);
 });
 
 test('Delayed location can cause count to be off', async () => {
@@ -71,7 +51,6 @@ test('Delayed location can cause count to be off', async () => {
   const result = await aggregator.jobs_per_category_and_continent();
 
   expect(result).toBeDefined();
-  expect(result.continents).toBeDefined()
-  expect(result.continents['europe']).toBeDefined()
-  expect(result.continents['europe']).toBe(1_000);
-}, 5000)
+  expect(result['Tech']).toBeDefined()
+  expect(result['Tech']['europe']).toBe(1_000);
+})
