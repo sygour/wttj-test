@@ -1,4 +1,5 @@
 const data_provider = require('./data_provider')
+const locator = require('./locator')
 
 const find_category = (job, professions) => {
   const match = professions
@@ -28,11 +29,15 @@ const jobs_per_category_and_continent = () => {
     const result = {
       professions: {
         total: 0,
+      },
+      continents: {
+        total: 0,
       }
     };
     for (const job of jobs) {
       result.professions.total++;
       increment_category(result, job, professions)
+      result.continents.total++;
     }
     return result;
   })

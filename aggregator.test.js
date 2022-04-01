@@ -1,5 +1,6 @@
 const aggregator = jest.requireActual('./aggregator');
 const data_provider = require('./data_provider')
+const locator = require('./locator')
 
 beforeEach(() => {
   data_provider.read_jobs = async () => (
@@ -22,9 +23,10 @@ beforeEach(() => {
       }
     ]
   );
+  locator.get_continent = async () => ("europe");
 })
 
-test('Should count all jobs', async () => {
+test('Should count jobs per category total', async () => {
   const result = await aggregator.jobs_per_category_and_continent();
 
   expect(result).toBeDefined();
@@ -40,4 +42,13 @@ test('Should count jobs per category', async () => {
   expect(result.professions).toBeDefined()
   expect(result.professions['Tech']).toBeDefined()
   expect(result.professions['Tech']).toBe(1);
+});
+
+test('Should count jobs per continent total', async () => {
+  const result = await aggregator.jobs_per_category_and_continent();
+
+  expect(result).toBeDefined();
+  expect(result.continents).toBeDefined()
+  expect(result.continents.total).toBeDefined()
+  expect(result.continents.total).toBe(1);
 });
