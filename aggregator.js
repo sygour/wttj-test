@@ -18,6 +18,11 @@ const increment_category = (result, job, professions) => {
   }
 }
 
+const increment_continent = (result, continent) => {
+  const count = result.continents[continent] ? result.continents[continent] : 0;
+  result.continents[continent] = count + 1;
+}
+
 const jobs_per_category_and_continent = () => {
   return Promise.all([
     data_provider.read_jobs(),
@@ -38,6 +43,7 @@ const jobs_per_category_and_continent = () => {
       result.professions.total++;
       increment_category(result, job, professions)
       result.continents.total++;
+      locator.get_continent(job.latitude, job.longitude).then(continent => increment_continent(result, continent));
     }
     return result;
   })

@@ -52,3 +52,12 @@ test('Should count jobs per continent total', async () => {
   expect(result.continents.total).toBeDefined()
   expect(result.continents.total).toBe(1);
 });
+
+test('Should count jobs per continent', async () => {
+  const result = await aggregator.jobs_per_category_and_continent();
+
+  expect(result).toBeDefined();
+  expect(result.continents).toBeDefined()
+  expect(result.continents['europe']).toBeDefined()
+  expect(result.continents['europe']).toBe(1);
+});
