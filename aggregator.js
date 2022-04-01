@@ -9,21 +9,43 @@ const find_category = (job, professions) => {
   }
 }
 
+const increment = (result, attribute) => {
+  const count = result[attribute] ? result[attribute] : 0;
+  result[attribute] = count + 1;
+}
+
 const increment_category = (result, job, professions) => {
   const category = find_category(job, professions)
   if (category) {
-    const name = category.category_name;
-    const count = result.professions[name] ? result.professions[name] : 0;
-    result.professions[name] = count + 1;
+    increment(result, category.category_name);
   }
 }
 
-const increment_continent = (result, continent) => {
-  const count = result.continents[continent] ? result.continents[continent] : 0;
-  result.continents[continent] = count + 1;
+const continent_aggregation = async (jobs) => {
+  return Promise.all(
+    jobs.map(job => locator.get_continent(job.latitude, job.longitude))
+  ).then(continents => {
+    const result = {
+      total: continents.length
+    };
+    continents.map(continent => {
+      increment(result, continent);
+    });
+    return result
+  });
 }
 
-const jobs_per_category_and_continent = () => {
+const category_aggregation = (jobs, professions) => {
+  const result = {
+    total: jobs.length,
+  };
+  for (const job of jobs) {
+    increment_category(result, job, professions)
+  }
+  return result;
+}
+
+const jobs_per_category_and_continent = async () => {
   return Promise.all([
     data_provider.read_jobs(),
     data_provider.read_professions()
@@ -31,21 +53,13 @@ const jobs_per_category_and_continent = () => {
     const jobs = promises[0];
     const professions = promises[1];
 
-    const result = {
-      professions: {
-        total: 0,
-      },
-      continents: {
-        total: 0,
-      }
-    };
-    for (const job of jobs) {
-      result.professions.total++;
-      increment_category(result, job, professions)
-      result.continents.total++;
-      locator.get_continent(job.latitude, job.longitude).then(continent => increment_continent(result, continent));
-    }
-    return result;
+    return Promise.all([
+      category_aggregation(jobs, professions),
+      continent_aggregation(jobs)
+    ]).then(aggregations => ({
+      categories: aggregations[0],
+      continents: aggregations[1]
+    }));
   })
 }
 

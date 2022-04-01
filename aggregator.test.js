@@ -2,18 +2,16 @@ const aggregator = jest.requireActual('./aggregator');
 const data_provider = require('./data_provider')
 const locator = require('./locator')
 
+const JOB_EXAMPLE = {
+  profession_id: 1,
+  contract_type: 'a contract type',
+  name: 'a job name',
+  office_latitude: 'some latitude',
+  office_longitude: 'some longitude',
+};
+
 beforeEach(() => {
-  data_provider.read_jobs = async () => (
-    [
-      {
-        profession_id: 1,
-        contract_type: 'a contract type',
-        name: 'a job name',
-        office_latitude: 'some latitude',
-        office_longitude: 'some longitude',
-      }
-    ]
-  );
+  data_provider.read_jobs = async () => ([JOB_EXAMPLE]);
   data_provider.read_professions = async () => (
     [
       {
@@ -30,18 +28,18 @@ test('Should count jobs per category total', async () => {
   const result = await aggregator.jobs_per_category_and_continent();
 
   expect(result).toBeDefined();
-  expect(result.professions).toBeDefined()
-  expect(result.professions.total).toBeDefined()
-  expect(result.professions.total).toBe(1);
+  expect(result.categories).toBeDefined()
+  expect(result.categories.total).toBeDefined()
+  expect(result.categories.total).toBe(1);
 });
 
 test('Should count jobs per category', async () => {
   const result = await aggregator.jobs_per_category_and_continent();
 
   expect(result).toBeDefined();
-  expect(result.professions).toBeDefined()
-  expect(result.professions['Tech']).toBeDefined()
-  expect(result.professions['Tech']).toBe(1);
+  expect(result.categories).toBeDefined()
+  expect(result.categories['Tech']).toBeDefined()
+  expect(result.categories['Tech']).toBe(1);
 });
 
 test('Should count jobs per continent total', async () => {
@@ -61,3 +59,19 @@ test('Should count jobs per continent', async () => {
   expect(result.continents['europe']).toBeDefined()
   expect(result.continents['europe']).toBe(1);
 });
+
+test('Delayed location can cause count to be off', async () => {
+  data_provider.read_jobs = async () => (Array(1_000).fill(JOB_EXAMPLE));
+  locator.get_continent = async () => (new Promise((resolve, reject) => {
+    setTimeout(() => {
+      resolve('europe');
+    }, Math.floor(Math.random() * 100));
+  }));
+
+  const result = await aggregator.jobs_per_category_and_continent();
+
+  expect(result).toBeDefined();
+  expect(result.continents).toBeDefined()
+  expect(result.continents['europe']).toBeDefined()
+  expect(result.continents['europe']).toBe(1_000);
+}, 5000)
