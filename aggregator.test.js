@@ -13,6 +13,15 @@ beforeEach(() => {
       }
     ]
   );
+  data_provider.read_professions = async () => (
+    [
+      {
+        id: 1,
+        name: 'Devops / Infrastructure',
+        category_name: 'Tech',
+      }
+    ]
+  );
 })
 
 test('Should count all jobs', async () => {
@@ -24,3 +33,11 @@ test('Should count all jobs', async () => {
   expect(result.professions.total).toBe(1);
 });
 
+test('Should count jobs per category', async () => {
+  const result = await aggregator.jobs_per_category_and_continent();
+
+  expect(result).toBeDefined();
+  expect(result.professions).toBeDefined()
+  expect(result.professions['Tech']).toBeDefined()
+  expect(result.professions['Tech']).toBe(1);
+});
