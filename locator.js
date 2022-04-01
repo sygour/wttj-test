@@ -8,7 +8,7 @@ const random_continent = () => {
   return continents[Math.floor(rand * continents_count)];
 }
 
-const get_continent = (lat, lon) => {
+const get_continent = async (lat, lon) => {
   return random_continent();
 }
 
