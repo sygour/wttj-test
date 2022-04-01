@@ -25,6 +25,7 @@ const read_file_with_header = (file, line_mapper) => {
     .then(data => {
       return data.split('\n')
         .slice(1)
+        .filter(line => line && line.length > 0)
         .map(line_mapper);
     });
 }

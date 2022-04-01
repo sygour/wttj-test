@@ -14,6 +14,19 @@ test('Should retrieve at least one profession', async () => {
   );
 });
 
+test('Should have only specified professions', async () => {
+  const result = await data_provider.read_professions();
+
+  expect(result).toBeDefined();
+  for (const profession of result) {
+    expect(profession).toMatchObject({
+      id: expect.any(Number),
+      name: expect.any(String),
+      category_name: expect.any(String),
+    })
+  }
+});
+
 test('Should retrieve at least one job', async () => {
   const result = await data_provider.read_jobs();
 
@@ -28,4 +41,19 @@ test('Should retrieve at least one job', async () => {
       office_longitude: '11.5781413',
     },
   );
+});
+
+test('Should have only specified jobs', async () => {
+  const result = await data_provider.read_jobs();
+
+  expect(result).toBeDefined();
+  for (const job of result) {
+    expect(job).toMatchObject({
+      profession_id: expect.any(Number),
+      contract_type: expect.any(String),
+      name: expect.any(String),
+      office_latitude: expect.any(String),
+      office_longitude: expect.any(String),
+    })
+  }
 });
