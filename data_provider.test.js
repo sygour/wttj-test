@@ -37,8 +37,8 @@ test('Should retrieve at least one job', async () => {
       profession_id: 7,
       contract_type: 'INTERNSHIP',
       name: '[Louis Vuitton Germany] Praktikant (m/w) im Bereich Digital Retail (E-Commerce)',
-      office_latitude: '48.1392154',
-      office_longitude: '11.5781413',
+      office_latitude: 48.1392154,
+      office_longitude: 11.5781413,
     },
   );
 });
@@ -48,12 +48,17 @@ test('Should have only specified jobs', async () => {
 
   expect(result).toBeDefined();
   for (const job of result) {
+    expect(job.profession_id).toBeDefined();
+    expect(job.contract_type).toBeDefined();
+    expect(job.name).toBeDefined();
+    expect(job.office_latitude).not.toBeNaN();
+    expect(job.office_longitude).not.toBeNaN();
     expect(job).toMatchObject({
       profession_id: expect.any(Number),
       contract_type: expect.any(String),
       name: expect.any(String),
-      office_latitude: expect.any(String),
-      office_longitude: expect.any(String),
+      office_latitude: expect.any(Number),
+      office_longitude: expect.any(Number),
     })
   }
 });

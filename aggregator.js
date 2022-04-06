@@ -22,36 +22,38 @@ const jobs_per_category_and_continent = async () => {
     const jobs = promises[0];
     const professions = promises[1];
 
-    return Promise.all(
-      jobs.map(job => (
-        locator.get_continent(job.latitude, job.longitude)
-          .then(continent => ({
-              continent: continent,
-              profession: find_profession(job, professions)
-            })
-          )
-      ))
-    ).then(infos => {
-      const result = {};
-      infos.map(info => {
-        if (info.profession) {
-          const category = info.profession.category_name;
-          if (!result[category]) {
-            result[category] = {};
-          }
-          if (!result['total']) {
-            result['total'] = {
-              total: 0
-            };
-          }
-          increment(result[category], 'total');
-          increment(result[category], info.continent);
-          increment(result['total'], 'total');
-          increment(result['total'], info.continent);
+    const infos = [];
+    for (const job of jobs) {
+      const continent = locator.get_continent(job.office_latitude, job.office_longitude)
+      if (continent) {
+        infos.push({
+          continent: continent,
+          profession: find_profession(job, professions)
+        });
+      } else {
+        console.error('cannot find location for job: ', JSON.stringify(job));
+      }
+    }
+
+    const result = {};
+    infos.forEach(info => {
+      if (info.profession) {
+        const category = info.profession.category_name;
+        if (!result[category]) {
+          result[category] = {};
         }
-      })
-      return result;
+        if (!result['total']) {
+          result['total'] = {
+            total: 0
+          };
+        }
+        increment(result[category], 'total');
+        increment(result[category], info.continent);
+        increment(result['total'], 'total');
+        increment(result['total'], info.continent);
+      }
     })
+    return result;
   })
 }
 
