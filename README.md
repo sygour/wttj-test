@@ -148,6 +148,91 @@ The 2nd app write and read should be done in 2 different worker/thread to make i
 
 With this Db model, we can even have many Db writer and consider this job table as an append-only table.
 
+### Separating read and write
+
+We could also separate reading and writing in 2 different apps:
+
+The 1st would:
+- receive new jobs
+- find its location
+- store in Db
+
+The 2nd would:
+- read Db with a dedicated query
+
+With this architecture, we can scale our applications regarding its usage:
+- if we get way more jobs: increase the number of job-receiver app running in parallel
+- if we get more queries: increase the number of job-research app running in parallel
+
 ## 3. API implementation
 
+This aggregation could be a basis for job research and refinement.
 
+### API users
+
+The first aspect we need to design/define is the data we want to show our users:
+- it can be people looking for a job
+- it can also be an internal team looking for a way to visualize our current data
+
+Depending on the user, we may show more/less info in our JSON model. I will assume it is aimed at people looking for a job.
+
+### Base
+
+Our base API endpoint would be:
+```http request
+GET /jobs
+```
+
+But it would not be really RESTful to present an aggregation on this endpoint: it would be more a list of jobs. For example the latest jobs with these default filters:
+```http request
+GET /jobs?page=0&issue_date=desc
+===
+{
+  data: [], // array of jobs
+  page: {
+    number: 0,
+    page_count: n,
+    element_per_page: m
+  }
+}
+```
+
+As the number of jobs is supposed to increase, it seems logical to paginate the results.
+
+### Aggregation
+
+We still want to provide a way to show data aggregation:
+```http request
+GET /jobs?view_type=aggregation
+```
+
+As well, we could offer a closer look, per country of a continent for example:
+```http request
+GET /jobs?view_type=aggregation&continent=europe
+```
+
+### Filters
+
+#### Location
+
+As we were aggregating per continent, we could also provide jobs listing per location:
+```http request
+GET /jobs?continent=europe
+GET /jobs?continent=europe&country=germany
+GET /jobs?continent=europe&country=germany&city=berlin
+```
+
+#### Job category
+
+Job category is a useful filter as well:
+```http request
+GET /jobs?category=Tech
+```
+
+#### Job name
+
+The name of the job would also be interesting to compare offer that are similar:
+```http request
+GET /jobs?name="bras droit"
+```
+This one would require a match on the name string `name ilike 'bras droit'`. We should also be careful at properly escaping characters to avoid SQL injections.
