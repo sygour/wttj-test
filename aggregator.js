@@ -39,8 +39,15 @@ const jobs_per_category_and_continent = async () => {
           if (!result[category]) {
             result[category] = {};
           }
+          if (!result['total']) {
+            result['total'] = {
+              total: 0
+            };
+          }
           increment(result[category], 'total');
           increment(result[category], info.continent);
+          increment(result['total'], 'total');
+          increment(result['total'], info.continent);
         }
       })
       return result;

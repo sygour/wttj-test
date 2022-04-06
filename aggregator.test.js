@@ -53,4 +53,20 @@ test('Delayed location can cause count to be off', async () => {
   expect(result).toBeDefined();
   expect(result['Tech']).toBeDefined()
   expect(result['Tech']['europe']).toBe(1_000);
-})
+});
+
+test('Should count total jobs per continent', async () => {
+  const result = await aggregator.jobs_per_category_and_continent();
+
+  expect(result).toBeDefined();
+  expect(result['total']).toBeDefined()
+  expect(result['total']['europe']).toBe(1);
+});
+
+test('Should count total jobs for all continents', async () => {
+  const result = await aggregator.jobs_per_category_and_continent();
+
+  expect(result).toBeDefined();
+  expect(result['total']).toBeDefined()
+  expect(result['total']['total']).toBe(1);
+});
