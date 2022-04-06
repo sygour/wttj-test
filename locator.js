@@ -14,4 +14,5 @@ const get_continent = async (lat, lon) => {
 
 module.exports = {
   get_continent,
+  continents,
 };
