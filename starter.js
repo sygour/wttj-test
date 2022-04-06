@@ -12,10 +12,6 @@ aggregator.jobs_per_category_and_continent()
         column_titles.push(category);
       }
     }
-    console.log(
-      'cols', column_titles,
-      'rows', row_titles
-    );
 
     const head = [''].concat(column_titles);
     const table = new Table({head: head});
